@@ -99,7 +99,7 @@ RSpec.describe 'Products API', type: :request do
 
   # Test suite for DELETE /products/:id
   describe 'DELETE /products/:id' do
-    before { delete "products/#{product_id}" }
+    before { delete "/products/#{product_id}" }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)
