@@ -23,12 +23,12 @@ RSpec.describe 'Products API', type: :request do
 
   # Test suite for GET /products/:id
   describe 'GET /products/:id' do
-    before { get "products/#{product_id}" }
+    before { get "/products/#{product_id}" }
 
     context 'when the record exists' do
       it 'returns the product' do
         expect(json).not_to be_empty
-        expect(json['id']).to eq(todo_id)
+        expect(json['id']).to eq(product_id)
       end
 
       it 'returns status code 200' do
@@ -37,7 +37,7 @@ RSpec.describe 'Products API', type: :request do
     end
 
     context 'when the record does not exist' do
-      let(:todo_id) { 100 }
+      let(:product_id) { 100 }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -70,7 +70,7 @@ RSpec.describe 'Products API', type: :request do
       before { post '/products', params: { title: 'Kross Moon V1' } }
 
       it 'returns status code 422' do
-        expect(status).to have_http_status(422)
+        expect(response).to have_http_status(422)
       end
 
       it 'returns a validation failure message' do
