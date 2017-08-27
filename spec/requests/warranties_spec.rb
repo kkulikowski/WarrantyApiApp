@@ -17,7 +17,7 @@ RSpec.describe 'Warranties API' do
       end
 
       it 'returns all product warranties' do
-        expect(json.size).to eq(20)
+        expect(json.size).to eq(3)
       end
     end
 
@@ -63,7 +63,7 @@ RSpec.describe 'Warranties API' do
 
   # Test suite for PUT /products/:product_id/warranties
   describe 'POST /products/:product_id/warranties' do
-    let(:valid_attributes) { { name: 'Visit Narnia', done: false } }
+    let(:valid_attributes) { { name: 'Giant Glory' } }
 
     context 'when request attributes are valid' do
       before { post "/products/#{product_id}/warranties", params: valid_attributes }
@@ -88,7 +88,7 @@ RSpec.describe 'Warranties API' do
 
   # Test suite for PUT /products/:product_id/warranties/:id
   describe 'PUT /products/:product_id/warranties/:id' do
-    let(:valid_attributes) { { name: 'Mozart' } }
+    let(:valid_attributes) { { name: 'Specialized Demo' } }
 
     before { put "/products/#{product_id}/warranties/#{id}", params: valid_attributes }
 
@@ -99,7 +99,7 @@ RSpec.describe 'Warranties API' do
 
       it 'updates the warranty' do
         updated_warranty = Warranty.find(id)
-        expect(updated_warranty.name).to match(/Mozart/)
+        expect(updated_warranty.name).to match(/Specialized Demo/)
       end
     end
 
