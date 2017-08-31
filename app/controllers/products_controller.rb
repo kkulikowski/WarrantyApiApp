@@ -3,7 +3,7 @@ class ProductsController < ApplicationController
 
   # Get /products
   def index
-    @products = Product.all
+    @products = current_user.products
     json_response(@products)
   end
 
@@ -13,7 +13,7 @@ class ProductsController < ApplicationController
     # This way, the model will raise an exception ActiveRecord::RecordInvalid. 
     # This way, we can avoid deep nested if statements in the controller.
     # Thus, we rescue from this exception in the ExceptionHandler module.
-    @product = Product.create!(product_params)
+    @product = current_user.products.create!(product_params)
     json_response(@product, :created)
   end
 
@@ -38,7 +38,7 @@ class ProductsController < ApplicationController
 
   def product_params
     # whitelist params
-    params.permit(:title, :created_by)
+    params.permit(:title)
   end
 
   def set_product

@@ -2,14 +2,16 @@ require 'rails_helper'
 
 RSpec.describe 'Warranties API' do
   # Initialize the test data
-  let!(:product) { create(:product) }
+  let(:user) { create(:user) }
+  let!(:product) { create(:product, created_by: user.id) }
   let!(:warranties) { create_list(:warranty, 3, product_id: product.id) }
   let(:product_id) { product.id }
   let(:id) { warranties.first.id }
+  let(:headers) { valid_headers }
 
   # Test suite for GET /products/:product_id/warranties
   describe 'GET /products/:product_id/warranties' do
-    before { get "/products/#{product_id}/warranties" }
+    before { get "/products/#{product_id}/warranties", params: {}, headers: headers }
 
     context 'when product exists' do
       it 'returns status code 200' do
@@ -36,7 +38,7 @@ RSpec.describe 'Warranties API' do
 
   # Test suite for GET /products/:product_id/warranties/:id
   describe 'GET /products/:product_id/warranties/:id' do
-    before { get "/products/#{product_id}/warranties/#{id}" }
+    before { get "/products/#{product_id}/warranties/#{id}", params: {}, headers: headers }
 
     context 'when product warranty exists' do
       it 'returns status code 200' do
@@ -63,10 +65,10 @@ RSpec.describe 'Warranties API' do
 
   # Test suite for PUT /products/:product_id/warranties
   describe 'POST /products/:product_id/warranties' do
-    let(:valid_attributes) { { name: 'Giant Glory' } }
+    let(:valid_attributes) { { name: 'Giant Glory' }.to_json }
 
     context 'when request attributes are valid' do
-      before { post "/products/#{product_id}/warranties", params: valid_attributes }
+      before { post "/products/#{product_id}/warranties", params: valid_attributes, headers: headers }
 
       it 'returns status code 201' do
         expect(response).to have_http_status(201)
@@ -74,7 +76,7 @@ RSpec.describe 'Warranties API' do
     end
 
     context 'when an invalid request' do
-      before { post "/products/#{product_id}/warranties", params: {} }
+      before { post "/products/#{product_id}/warranties", params: {}, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -88,9 +90,9 @@ RSpec.describe 'Warranties API' do
 
   # Test suite for PUT /products/:product_id/warranties/:id
   describe 'PUT /products/:product_id/warranties/:id' do
-    let(:valid_attributes) { { name: 'Specialized Demo' } }
+    let(:valid_attributes) { { name: 'Specialized Demo' }.to_json }
 
-    before { put "/products/#{product_id}/warranties/#{id}", params: valid_attributes }
+    before { put "/products/#{product_id}/warranties/#{id}", params: valid_attributes, headers: headers }
 
     context 'when warranty exists' do
       it 'returns status code 204' do
@@ -118,7 +120,7 @@ RSpec.describe 'Warranties API' do
 
   # Test suite for DELETE /products/:id
   describe 'DELETE /products/:id' do
-    before { delete "/products/#{product_id}/warranties/#{id}" }
+    before { delete "/products/#{product_id}/warranties/#{id}", params: {}, headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

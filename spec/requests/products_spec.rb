@@ -1,6 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe 'Products API', type: :request do
+  # add products owner
+  let(:user) { create(:user) }
+  let!(:products) { create_list(:product, 10, created_by: user.id) }
+  let(:product_id) { products.first.id }
+  # authorize request
+  let(:headers) { valid_headers }
+  
   # initialize test data
   let!(:products) { create_list(:product, 10) }
   let(:product_id) { products.first.id }
@@ -8,7 +15,7 @@ RSpec.describe 'Products API', type: :request do
   # Test suite for GET /products
   describe 'GET /products' do
     # make HTTP get request before each example
-    before { get '/products' }
+    before { get '/products', params: {}, headers: headers }
 
     it 'returns products' do
       # Note `json` is a custom helper to parse JSON responses
@@ -23,7 +30,7 @@ RSpec.describe 'Products API', type: :request do
 
   # Test suite for GET /products/:id
   describe 'GET /products/:id' do
-    before { get "/products/#{product_id}" }
+    before { get "/products/#{product_id}", params: {}, headers: headers }
 
     context 'when the record exists' do
       it 'returns the product' do
@@ -52,10 +59,12 @@ RSpec.describe 'Products API', type: :request do
   # Test suite for POST /products
   describe 'POST /products' do
     # validate payload
-    let(:valid_attributes) { { title: 'Scott Voltage FR 20', created_by: '1' }}
+    let(:valid_attributes) { 
+      { title: 'Scott Voltage FR 20', created_by: user.id.to_s }.to_json
+    }
 
     context 'when the request is valid' do
-      before { post '/products', params: valid_attributes }
+      before { post '/products', params: valid_attributes, headers: headers }
       
       it 'creates a product' do
         expect(json['title']).to eq('Scott Voltage FR 20')
@@ -67,7 +76,8 @@ RSpec.describe 'Products API', type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/products', params: { title: 'Kross Moon V1' } }
+      let(:valid_attributes) { { title: nil }.to_json }
+      before { post '/products', params: valid_attributes, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -82,10 +92,10 @@ RSpec.describe 'Products API', type: :request do
 
   # Test suite for PUT /products/:id
   describe 'PUT /products/:id' do
-    let(:valid_attributes) { { title: 'Specialized Status' } }
-  
+    let(:valid_attributes) { { title: 'Specialized Status' }.to_json }
+
     context 'when the record exists' do
-      before { put "/products/#{product_id}", params: valid_attributes }
+      before { put "/products/#{product_id}", params: valid_attributes, headers: headers }
 
       it 'updates the record' do
         expect(response.body).to be_empty
@@ -99,7 +109,7 @@ RSpec.describe 'Products API', type: :request do
 
   # Test suite for DELETE /products/:id
   describe 'DELETE /products/:id' do
-    before { delete "/products/#{product_id}" }
+    before { delete "/products/#{product_id}", headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)
