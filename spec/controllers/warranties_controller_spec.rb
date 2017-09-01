@@ -1,5 +1,5 @@
 require 'rails_helper'
 
-RSpec.describe WarrantiesController, type: :controller do
+RSpec.describe V1::WarrantiesController, type: :controller do
 
 end
