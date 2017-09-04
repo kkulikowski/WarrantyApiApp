@@ -5,3 +5,12 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+# Create User
+User.create(name: 'FirstOne', email: 'sample@example.com', password: 'nothing', password_confirmation: 'nothing')
+
+# seed 50 records
+50.times do
+  product = Product.create(title: Faker::Lorem.word, created_by: User.first.id)
+  product.warranties.create(name: Faker::Lorem.word)
+end
